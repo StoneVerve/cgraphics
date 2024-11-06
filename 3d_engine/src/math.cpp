@@ -36,7 +36,7 @@ public:
     /**
      * @brief Sobrecarga del operador += para sumar otro vector a este vector.
      * @param v El vector a sumar.
-     * @return Referencia al vector resultante despuÈs de la suma.
+     * @return Referencia al vector resultante despu√©s de la suma.
      */
     Vector3& operator+=(const Vector3& v) {
     	this->x += v.x;
@@ -62,8 +62,11 @@ public:
      * @return Vector resultante del producto cruz.
      */
     static Vector3 cross(const Vector3& u, const Vector3& v){
-    	Vector3 uno = Vector3();
-		return uno;
+    	double cx = u.y * v.z - u.z * v.y;
+        double cy = u.z * v.x - u.x * v.z;
+        double cz = u.x * v.y - u.y * v.x;
+        
+        return Vector3(cx, cy, cz);
 	}
 
     /** 
@@ -96,7 +99,7 @@ public:
      * @brief Comprueba si dos vectores son aproximadamente iguales.
      * @param u Primer vector.
      * @param v Segundo vector.
-     * @param epsilon Tolerancia para la comparaciÛn. Valor por defecto es 0.000001.
+     * @param epsilon Tolerancia para la comparaci√≥n. Valor por defecto es 0.000001.
      * @return Verdadero si los vectores son aproximadamente iguales.
      */
     static bool equals(const Vector3& u, const Vector3& v, double epsilon = 0.000001){
@@ -123,8 +126,8 @@ public:
      * @return Vector normalizado.
      */
     Vector3 normalize() const {
-		Vector3 uno = Vector3();
-		return uno;
+		double norma = distance(*this, Vector3());
+		return Vector3(this -> x / norma, this -> y / norma, this -> z / norma);
 	}
 
     /** 
@@ -174,7 +177,7 @@ public:
 
 /** 
  * @class Matrix3
- * @brief La clase Matrix3 representa matrices de 3 ◊ 3 y se utiliza para la representaciÛn y construcciÛn de transformaciones en dos dimensiones.
+ * @brief La clase Matrix3 representa matrices de 3 √ó 3 y se utiliza para la representaci√≥n y construcci√≥n de transformaciones en dos dimensiones.
  */
 class Matrix3 {
 public:
@@ -184,15 +187,15 @@ public:
 
     /** 
      * @brief Constructor por defecto.
-     * @param a00 Elemento en la posiciÛn (0,0). Valor por defecto es 1.
-     * @param a01 Elemento en la posiciÛn (0,1). Valor por defecto es 0.
-     * @param a02 Elemento en la posiciÛn (0,2). Valor por defecto es 0.
-     * @param a10 Elemento en la posiciÛn (1,0). Valor por defecto es 0.
-     * @param a11 Elemento en la posiciÛn (1,1). Valor por defecto es 1.
-     * @param a12 Elemento en la posiciÛn (1,2). Valor por defecto es 0.
-     * @param a20 Elemento en la posiciÛn (2,0). Valor por defecto es 0.
-     * @param a21 Elemento en la posiciÛn (2,1). Valor por defecto es 0.
-     * @param a22 Elemento en la posiciÛn (2,2). Valor por defecto es 1.
+     * @param a00 Elemento en la posici√≥n (0,0). Valor por defecto es 1.
+     * @param a01 Elemento en la posici√≥n (0,1). Valor por defecto es 0.
+     * @param a02 Elemento en la posici√≥n (0,2). Valor por defecto es 0.
+     * @param a10 Elemento en la posici√≥n (1,0). Valor por defecto es 0.
+     * @param a11 Elemento en la posici√≥n (1,1). Valor por defecto es 1.
+     * @param a12 Elemento en la posici√≥n (1,2). Valor por defecto es 0.
+     * @param a20 Elemento en la posici√≥n (2,0). Valor por defecto es 0.
+     * @param a21 Elemento en la posici√≥n (2,1). Valor por defecto es 0.
+     * @param a22 Elemento en la posici√≥n (2,2). Valor por defecto es 1.
      */
     Matrix3(double a00 = 1, double a01 = 0, double a02 = 0,
             double a10 = 0, double a11 = 1, double a12 = 0,
@@ -264,11 +267,19 @@ public:
      * @brief Compara dos matrices con un epsilon.
      * @param m1 Primera matriz.
      * @param m2 Segunda matriz.
-     * @param e Epsilon para la comparaciÛn.
+     * @param e Epsilon para la comparaci√≥n.
      * @return Verdadero si las matrices son aproximadamente iguales.
      */
     static bool equalsWithE(const Matrix3& m1, const Matrix3& m2, double e){
-    	return true;
+    	return fabs(m1.a00 - m2.a00) < e &&
+               fabs(m1.a01 - m2.a01) < e &&
+               fabs(m1.a02 - m2.a02) < e &&
+               fabs(m1.a10 - m2.a10) < e &&
+               fabs(m1.a11 - m2.a11) < e &&
+               fabs(m1.a12 - m2.a12) < e &&
+               fabs(m1.a20 - m2.a20) < e &&
+               fabs(m1.a21 - m2.a21) < e &&
+               fabs(m1.a22 - m2.a22) < e;
 	}
 
     /** 
@@ -278,7 +289,8 @@ public:
      * @return Verdadero si las matrices son aproximadamente iguales.
      */
     static bool equals(const Matrix3& m1, const Matrix3& m2){
-    	return true;
+    	double epsilon = 0.00000000001;
+        return equalsWithE(m1, m2, epsilon);
 	}
 
     /** 
@@ -288,7 +300,7 @@ public:
      * @return Verdadero si las matrices son exactamente iguales.
      */
     static bool exactEquals(const Matrix3& m1, const Matrix3& m2){
-    	return true;
+    	return equalsWithE(m1, m2, 0.0);
 	}
 
     /** 
@@ -318,7 +330,7 @@ public:
      * @brief Multiplica dos matrices.
      * @param m1 Primera matriz.
      * @param m2 Segunda matriz.
-     * @return Matriz resultante de la multiplicaciÛn.
+     * @return Matriz resultante de la multiplicaci√≥n.
      */
     static Matrix3 multiply(const Matrix3& m1, const Matrix3& m2){
     	double m_a00 = m1.a00 * m2.a00 + m1.a01 * m2.a10 + m1.a02 * m2.a20;
@@ -339,7 +351,7 @@ public:
      * @brief Multiplica una matriz por un escalar.
      * @param m1 Matriz a multiplicar.
      * @param c Escalar.
-     * @return Matriz resultante de la multiplicaciÛn por el escalar.
+     * @return Matriz resultante de la multiplicaci√≥n por el escalar.
      */
     static Matrix3 multiplyScalar(const Matrix3& m1, double c){
     	double m_a00 = m1.a00 * c;
@@ -359,7 +371,7 @@ public:
     /** 
      * @brief Multiplica una matriz por un vector.
      * @param v Vector a multiplicar.
-     * @return Vector resultante de la multiplicaciÛn.
+     * @return Vector resultante de la multiplicaci√≥n.
      */
     Vector3 multiplyVector(const Vector3& v) const{
 		return Vector3(a00 * v.x + a01 * v.y + a02 * v.z,
@@ -368,9 +380,9 @@ public:
 	}
 
     /** 
-     * @brief Crea una matriz de rotaciÛn.
-     * @param theta ¡ngulo de rotaciÛn en radianes.
-     * @return Matriz de rotaciÛn.
+     * @brief Crea una matriz de rotaci√≥n.
+     * @param theta √Ångulo de rotaci√≥n en radianes.
+     * @return Matriz de rotaci√≥n.
      */
     static Matrix3 rotate(double theta){
     	return Matrix3(cos(theta), -sin(theta), 0.0,
@@ -392,15 +404,15 @@ public:
 
     /** 
      * @brief Asigna nuevos valores a la matriz.
-     * @param a00 Elemento en la posiciÛn (0,0).
-     * @param a01 Elemento en la posiciÛn (0,1).
-     * @param a02 Elemento en la posiciÛn (0,2).
-     * @param a10 Elemento en la posiciÛn (1,0).
-     * @param a11 Elemento en la posiciÛn (1,1).
-     * @param a12 Elemento en la posiciÛn (1,2).
-     * @param a20 Elemento en la posiciÛn (2,0).
-     * @param a21 Elemento en la posiciÛn (2,1).
-     * @param a22 Elemento en la posiciÛn (2,2).
+     * @param a00 Elemento en la posici√≥n (0,0).
+     * @param a01 Elemento en la posici√≥n (0,1).
+     * @param a02 Elemento en la posici√≥n (0,2).
+     * @param a10 Elemento en la posici√≥n (1,0).
+     * @param a11 Elemento en la posici√≥n (1,1).
+     * @param a12 Elemento en la posici√≥n (1,2).
+     * @param a20 Elemento en la posici√≥n (2,0).
+     * @param a21 Elemento en la posici√≥n (2,1).
+     * @param a22 Elemento en la posici√≥n (2,2).
      */
     void set(double a00, double a01, double a02,
             double a10, double a11, double a12,
@@ -435,10 +447,10 @@ public:
 	}
 
     /** 
-     * @brief Crea una matriz de translaciÛn.
+     * @brief Crea una matriz de translaci√≥n.
      * @param tx Desplazamiento en el eje x.
      * @param ty Desplazamiento en el eje y.
-     * @return Matriz de translaciÛn.
+     * @return Matriz de translaci√≥n.
      */
     static Matrix3 translate(double tx, double ty){
     	return Matrix3(1.0, 0.0, tx,
@@ -532,7 +544,7 @@ public:
      * @brief Verifica si dos vectores son aproximadamente iguales.
      * @param u Primer vector.
      * @param v Segundo vector.
-     * @param epsilon Tolerancia para la comparaciÛn (por defecto 0.000001).
+     * @param epsilon Tolerancia para la comparaci√≥n (por defecto 0.000001).
      * @return bool True si los vectores son aproximadamente iguales, false en caso contrario.
      */
     static bool equals(const Vector4& u, const Vector4& v, double epsilon = 0.000001){
@@ -560,7 +572,7 @@ public:
      * @return Vector4 Vector normalizado.
      */
     Vector4 normalize() const{
-		double norma = distance(*this, Vector4(0.0, 0.0, 0.0, 0.0));
+		double norma = distance(*this, Vector4());
 		return Vector4(x / norma, y / norma, z / norma, w / norma);
 	}
 
@@ -615,7 +627,7 @@ public:
 
 /** 
  * @class Matrix4
- * @brief La clase Matrix4 representa matrices de 4 ◊ 4 y se utiliza para la representaciÛn y construcciÛn de transformaciones en tres dimensiones.
+ * @brief La clase Matrix4 representa matrices de 4 √ó 4 y se utiliza para la representaci√≥n y construcci√≥n de transformaciones en tres dimensiones.
  */
 class Matrix4 {
 public:
@@ -698,40 +710,108 @@ public:
 					   a30, a31, a32, a33);
 	}
 
+
+
+    // Helper function to get a 3x3 submatrix by removing the given row and column
+    Matrix3 getSubmatrix(int row, int col) const {
+        int rows[3] = {0, 1, 2};
+        int cols[3] = {0, 1, 2};
+        for (int i = 0; i < 3; ++i) {
+            if (rows[i] >= row) ++rows[i];
+            if (cols[i] >= col) ++cols[i];
+        }
+
+        // Return the 3x3 matrix (ignoring the specified row and column)
+        return Matrix3(
+            (row != 0 && col != 0) ? a00 : 0, (row != 0 && col != 1) ? a01 : 0, (row != 0 && col != 2) ? a02 : 0,
+            (row != 1 && col != 0) ? a10 : 0, (row != 1 && col != 1) ? a11 : 0, (row != 1 && col != 2) ? a12 : 0,
+            (row != 2 && col != 0) ? a20 : 0, (row != 2 && col != 1) ? a21 : 0, (row != 2 && col != 2) ? a22 : 0
+        );
+    }
+
+
     /**
      * @brief Calcula el determinante de la matriz.
      * @return double Determinante de la matriz.
      */
     double determinant() const {
-		double first_det = Matrix3(a11, a12, a13,
-								   a21, a22, a23,
-								   a31, a32, a33).determinant();
-		return first_det;
+		// Compute the determinant using cofactor expansion along the first row
+        double det = a00 * getSubmatrix(0, 0).determinant()
+                     - a01 * getSubmatrix(0, 1).determinant()
+                     + a02 * getSubmatrix(0, 2).determinant()
+                     - a03 * getSubmatrix(0, 3).determinant();
+        return det;
 	}
 
     /**
      * @brief Verifica si dos matrices son aproximadamente iguales.
      * @param m1 Primera matriz.
      * @param m2 Segunda matriz.
-     * @param epsilon Tolerancia para la comparaciÛn.
+     * @param epsilon Tolerancia para la comparaci√≥n.
      * @return bool True si las matrices son aproximadamente iguales, false en caso contrario.
      */
-    static bool equalsWithE(const Matrix4& m1, const Matrix4& m2, double epsilon);
+    static bool equalsWithE(const Matrix4& m1, const Matrix4& m2, double epsilon){
+        return abs(m1.a00 - m2.a00) <= epsilon &&
+               abs(m1.a01 - m2.a01) <= epsilon &&
+               abs(m1.a02 - m2.a02) <= epsilon &&
+               abs(m1.a03 - m2.a03) <= epsilon &&
+               abs(m1.a10 - m2.a10) <= epsilon &&
+               abs(m1.a11 - m2.a11) <= epsilon &&
+               abs(m1.a12 - m2.a12) <= epsilon &&
+               abs(m1.a13 - m2.a13) <= epsilon &&
+               abs(m1.a20 - m2.a20) <= epsilon &&
+               abs(m1.a21 - m2.a21) <= epsilon &&
+               abs(m1.a22 - m2.a22) <= epsilon &&
+               abs(m1.a23 - m2.a23) <= epsilon &&
+               abs(m1.a30 - m2.a30) <= epsilon &&
+               abs(m1.a31 - m2.a31) <= epsilon &&
+               abs(m1.a32 - m2.a32) <= epsilon &&
+               abs(m1.a33 - m2.a33) <= epsilon;
+    }
 
     /**
      * @brief Multiplica la matriz por un escalar.
      * @param scalar Escalar por el cual multiplicar la matriz.
-     * @return Matrix4 Resultado de la multiplicaciÛn por el escalar.
+     * @return Matrix4 Resultado de la multiplicaci√≥n por el escalar.
      */
-    Matrix4 multiplyByScalar(double scalar) const;
+    Matrix4 multiplyByScalar(double scalar) const{
+        return Matrix4(
+            a00 * scalar, a01 * scalar, a02 * scalar, a03 * scalar,
+            a10 * scalar, a11 * scalar, a12 * scalar, a13 * scalar,
+            a20 * scalar, a21 * scalar, a22 * scalar, a23 * scalar,
+            a30 * scalar, a31 * scalar, a32 * scalar, a33 * scalar
+        );
+    }
 
     /**
      * @brief Multiplica dos matrices.
      * @param m1 Primera matriz.
      * @param m2 Segunda matriz.
-     * @return Matrix4 Resultado de la multiplicaciÛn de m1 y m2.
+     * @return Matrix4 Resultado de la multiplicaci√≥n de m1 y m2.
      */
-    static Matrix4 multiply(const Matrix4& m1, const Matrix4& m2);
+    static Matrix4 multiply(const Matrix4& m1, const Matrix4& m2){
+         return Matrix4(
+            m1.a00 * m2.a00 + m1.a01 * m2.a10 + m1.a02 * m2.a20 + m1.a03 * m2.a30,  // Row 0, Column 0
+            m1.a00 * m2.a01 + m1.a01 * m2.a11 + m1.a02 * m2.a21 + m1.a03 * m2.a31,  // Row 0, Column 1
+            m1.a00 * m2.a02 + m1.a01 * m2.a12 + m1.a02 * m2.a22 + m1.a03 * m2.a32,  // Row 0, Column 2
+            m1.a00 * m2.a03 + m1.a01 * m2.a13 + m1.a02 * m2.a23 + m1.a03 * m2.a33,  // Row 0, Column 3
+
+            m1.a10 * m2.a00 + m1.a11 * m2.a10 + m1.a12 * m2.a20 + m1.a13 * m2.a30,  // Row 1, Column 0
+            m1.a10 * m2.a01 + m1.a11 * m2.a11 + m1.a12 * m2.a21 + m1.a13 * m2.a31,  // Row 1, Column 1
+            m1.a10 * m2.a02 + m1.a11 * m2.a12 + m1.a12 * m2.a22 + m1.a13 * m2.a32,  // Row 1, Column 2
+            m1.a10 * m2.a03 + m1.a11 * m2.a13 + m1.a12 * m2.a23 + m1.a13 * m2.a33,  // Row 1, Column 3
+
+            m1.a20 * m2.a00 + m1.a21 * m2.a10 + m1.a22 * m2.a20 + m1.a23 * m2.a30,  // Row 2, Column 0
+            m1.a20 * m2.a01 + m1.a21 * m2.a11 + m1.a22 * m2.a21 + m1.a23 * m2.a31,  // Row 2, Column 1
+            m1.a20 * m2.a02 + m1.a21 * m2.a12 + m1.a22 * m2.a22 + m1.a23 * m2.a32,  // Row 2, Column 2
+            m1.a20 * m2.a03 + m1.a21 * m2.a13 + m1.a22 * m2.a23 + m1.a23 * m2.a33,  // Row 2, Column 3
+
+            m1.a30 * m2.a00 + m1.a31 * m2.a10 + m1.a32 * m2.a20 + m1.a33 * m2.a30,  // Row 3, Column 0
+            m1.a30 * m2.a01 + m1.a31 * m2.a11 + m1.a32 * m2.a21 + m1.a33 * m2.a31,  // Row 3, Column 1
+            m1.a30 * m2.a02 + m1.a31 * m2.a12 + m1.a32 * m2.a22 + m1.a33 * m2.a32,  // Row 3, Column 2
+            m1.a30 * m2.a03 + m1.a31 * m2.a13 + m1.a32 * m2.a23 + m1.a33 * m2.a33   // Row 3, Column 3
+        );
+    }
 
     /**
      * @brief Invierte la matriz actual.
@@ -744,22 +824,37 @@ public:
      * @brief Establece la matriz como una matriz identidad.
      * @return Matrix4& Referencia a la matriz actual.
      */
-    Matrix4& identity();
+    Matrix4& identity() {
+        a00 = 1.0; a01 = 0.0; a02 = 0.0; a03 = 0.0;
+        a10 = 0.0; a11 = 1.0; a12 = 0.0; a13 = 0.0;
+        a20 = 0.0; a21 = 0.0; a22 = 1.0; a23 = 0.0;
+        a30 = 0.0; a31 = 0.0; a32 = 0.0; a33 = 1.0;
+        return *this;
+    }
 
     /**
      * @brief Multiplica cada componente de una matriz por un escalar.
      * @param m1 Matriz a multiplicar.
      * @param c Escalar por el cual multiplicar la matriz.
-     * @return Matrix4 Resultado de la multiplicaciÛn por el escalar.
+     * @return Matrix4 Resultado de la multiplicaci√≥n por el escalar.
      */
-    static Matrix4 multiplyScalar(const Matrix4& m1, double c);
+    static Matrix4 multiplyScalar(const Matrix4& m1, double c) {
+        return m1.multiplyByScalar(c);
+    }
 
     /**
      * @brief Multiplica un vector por la matriz.
      * @param v Vector a multiplicar.
-     * @return Vector4 Resultado de la multiplicaciÛn del vector por la matriz.
+     * @return Vector4 Resultado de la multiplicaci√≥n del vector por la matriz.
      */
-    Vector4 multiplyVector(const Vector4& v) const;
+    Vector4 multiplyVector(const Vector4& v) const{
+        return Vector4(
+            a00 * v.x + a01 * v.y + a02 * v.z + a03 * v.w,
+            a10 * v.x + a11 * v.y + a12 * v.z + a13 * v.w,
+            a20 * v.x + a21 * v.y + a22 * v.z + a23 * v.w,
+            a30 * v.x + a31 * v.y + a32 * v.z + a33 * v.w
+        );
+    }
 
     /**
      * @brief Establece nuevos valores para los elementos de la matriz.
@@ -781,7 +876,31 @@ public:
      * @param a33 Valor para el elemento (3,3).
      * @return Matrix4& Referencia a la matriz actual.
      */
-    Matrix4& set();
+    //Matrix4& set();
+    void set(double a00, double a01, double a02, double a03,
+             double a10, double a11, double a12, double a13,
+             double a20, double a21, double a22, double a23,
+             double a30, double a31, double a32, double a33) {
+        this->a00 = a00;
+        this->a01 = a01;
+        this->a02 = a02;
+        this->a03 = a03;
+
+        this->a10 = a10;
+        this->a11 = a11;
+        this->a12 = a12;
+        this->a13 = a13;
+
+        this->a20 = a20;
+        this->a21 = a21;
+        this->a22 = a22;
+        this->a23 = a23;
+
+        this->a30 = a30;
+        this->a31 = a31;
+        this->a32 = a32;
+        this->a33 = a33;
+    }
 
     /**
      * @brief Devuelve la resta de dos matrices.
@@ -789,24 +908,36 @@ public:
      * @param m2 Segunda matriz.
      * @return Matrix4 Resultado de la resta de m1 y m2.
      */
-    static Matrix4 subtract(const Matrix4& m1, const Matrix4& m2);
+    static Matrix4 subtract(const Matrix4& m1, const Matrix4& m2){
+        return Matrix4(m1.a00 - m2.a00, m1.a01 - m2.a01, m1.a02 - m2.a02, m1.a03 - m2.a03,
+                       m1.a10 - m2.a10, m1.a11 - m2.a11, m1.a12 - m2.a12, m1.a13 - m2.a13,
+                       m1.a20 - m2.a20, m1.a21 - m2.a21, m1.a22 - m2.a22, m1.a23 - m2.a23,
+                       m1.a30 - m2.a30, m1.a31 - m2.a31, m1.a32 - m2.a32, m1.a33 - m2.a33);
+    }
 
     /**
      * @brief Devuelve la transpuesta de la matriz actual.
      * @return Matrix4 Matriz transpuesta.
      */
-    Matrix4 transpose() const;
+    Matrix4 transpose() const{
+        return Matrix4(
+            a00, a10, a20, a30,  // First column becomes the first row
+            a01, a11, a21, a31,  // Second column becomes the second row
+            a02, a12, a22, a32,  // Third column becomes the third row
+            a03, a13, a23, a33   // Fourth column becomes the fourth row
+        );
+    }
 
 
-    // MÈtodos est·ticos de matrices de transformaciones de c·mara
+    // M√©todos est√°ticos de matrices de transformaciones de c√°mara
 
     /**
-     * @brief Genera una matriz de proyecciÛn de perspectiva utilizando un frustum.
+     * @brief Genera una matriz de proyecci√≥n de perspectiva utilizando un frustum.
      * 
-     * @param left LÌmite izquierdo del frustum.
-     * @param right LÌmite derecho del frustum.
-     * @param bottom LÌmite inferior del frustum.
-     * @param top LÌmite superior del frustum.
+     * @param left L√≠mite izquierdo del frustum.
+     * @param right L√≠mite derecho del frustum.
+     * @param bottom L√≠mite inferior del frustum.
+     * @param top L√≠mite superior del frustum.
      * @param near Distancia del plano cercano.
      * @param far Distancia del plano lejano.
      * @return Matrix4 Matriz 4x4 que define el frustum.
@@ -816,40 +947,40 @@ public:
     }
 
     /**
-     * @brief Genera una matriz de vista para una c·mara en una posiciÛn dada.
+     * @brief Genera una matriz de vista para una c√°mara en una posici√≥n dada.
      * 
-     * @param eye PosiciÛn de la c·mara.
-     * @param center Punto al que la c·mara est· mirando.
-     * @param up Vector hacia arriba en el espacio de la c·mara.
+     * @param eye Posici√≥n de la c√°mara.
+     * @param center Punto al que la c√°mara est√° mirando.
+     * @param up Vector hacia arriba en el espacio de la c√°mara.
      * @return Matrix4 Matriz 4x4 que define la vista.
      */
     static Matrix4 lookAt(const Vector3& eye, const Vector3& center, const Vector3& up) {
-        // TODO: Implementar la lÛgica del mÈtodo.
+        return Matrix4();// TODO: Implementar la l√≥gica del m√©todo.
     }
 
     /**
-     * @brief Genera una matriz de proyecciÛn ortogr·fica.
+     * @brief Genera una matriz de proyecci√≥n ortogr√°fica.
      * 
-     * @param left LÌmite izquierdo de la proyecciÛn.
-     * @param right LÌmite derecho de la proyecciÛn.
-     * @param bottom LÌmite inferior de la proyecciÛn.
-     * @param top LÌmite superior de la proyecciÛn.
+     * @param left L√≠mite izquierdo de la proyecci√≥n.
+     * @param right L√≠mite derecho de la proyecci√≥n.
+     * @param bottom L√≠mite inferior de la proyecci√≥n.
+     * @param top L√≠mite superior de la proyecci√≥n.
      * @param near Distancia del plano cercano.
      * @param far Distancia del plano lejano.
-     * @return Matrix4 Matriz 4x4 que define la proyecciÛn ortogr·fica.
+     * @return Matrix4 Matriz 4x4 que define la proyecci√≥n ortogr√°fica.
      */
     static Matrix4 orthographic(double left, double right, double bottom, double top, double near, double far) {
         return Matrix4();
     }
 
     /**
-     * @brief Genera una matriz de proyecciÛn de perspectiva utilizando un campo de visiÛn.
+     * @brief Genera una matriz de proyecci√≥n de perspectiva utilizando un campo de visi√≥n.
      * 
-     * @param fovy Campo de visiÛn en el eje vertical, en grados.
-     * @param aspect RelaciÛn de aspecto (ancho/alto).
+     * @param fovy Campo de visi√≥n en el eje vertical, en grados.
+     * @param aspect Relaci√≥n de aspecto (ancho/alto).
      * @param near Distancia del plano cercano.
      * @param far Distancia del plano lejano.
-     * @return Matrix4 Matriz 4x4 que define la proyecciÛn de perspectiva.
+     * @return Matrix4 Matriz 4x4 que define la proyecci√≥n de perspectiva.
      */
     static Matrix4 perspective(double fovy, double aspect, double near, double far) {
 
@@ -857,36 +988,42 @@ public:
     }
 
     /**
-     * @brief Genera una matriz de rotaciÛn alrededor del eje X.
+     * @brief Genera una matriz de rotaci√≥n alrededor del eje X.
      * 
-     * @param theta ¡ngulo de rotaciÛn en radianes.
-     * @return Matrix4 Matriz 4x4 que define la rotaciÛn alrededor del eje X.
+     * @param theta √Ångulo de rotaci√≥n en radianes.
+     * @return Matrix4 Matriz 4x4 que define la rotaci√≥n alrededor del eje X.
      */
     static Matrix4 rotateX(double theta) {
-
-        return Matrix4( );
+        return Matrix4(1.0, 0.0, 0.0, 0.0,
+                       0.0, cos(theta), -sin(theta), 0.0,
+                       0.0, sin(theta), cos(theta), 0.0,
+                       0.0, 0.0, 0.0, 1.0);
     }
 
     /**
-     * @brief Genera una matriz de rotaciÛn alrededor del eje Y.
+     * @brief Genera una matriz de rotaci√≥n alrededor del eje Y.
      * 
-     * @param theta ¡ngulo de rotaciÛn en radianes.
-     * @return Matrix4 Matriz 4x4 que define la rotaciÛn alrededor del eje Y.
+     * @param theta √Ångulo de rotaci√≥n en radianes.
+     * @return Matrix4 Matriz 4x4 que define la rotaci√≥n alrededor del eje Y.
      */
     static Matrix4 rotateY(double theta) {
-
-        return Matrix4();
+        return Matrix4(cos(theta), 0.0, sin(theta), 0.0,
+                       0.0, 1.0, 0.0, 0.0,
+                       -sin(theta), 0.0, cos(theta), 0.0,
+                       0.0, 0.0, 0.0, 1.0);
     }
 
         /**
-     * @brief Genera una matriz de rotaciÛn alrededor del eje X.
+     * @brief Genera una matriz de rotaci√≥n alrededor del eje Z.
      * 
      * @param Vector3 v
-     * @return Matrix4 Matriz 4x4 que define la rotaciÛn alrededor del eje z.
+     * @return Matrix4 Matriz 4x4 que define la rotaci√≥n alrededor del eje z.
      */
-    static Matrix4 rotateZ(Vector3 v) {
-
-        return Matrix4( );
+    static Matrix4 rotateZ(double theta) {
+        return Matrix4(cos(theta), -sin(theta), 0.0, 0.0,
+                       sin(theta), cos(theta), 0.0, 0.0,
+                       0.0, 0.0, 1.0, 0.0,
+                       0.0, 0.0, 0.0, 1.0);
     }
 
 
@@ -898,20 +1035,26 @@ public:
      * @param z Factor de escala en el eje Z.
      * @return Matrix4 Matriz 4x4 que define el escalado.
      */
-    static Matrix4 scale(double x, double y, double z) {
-        return Matrix4();
+    static Matrix4 scale(double sx, double sy, double sz) {
+        return Matrix4(sx, 0.0, 0.0, 0.0,
+                       0.0, sy, 0.0, 0.0,
+                       0.0, 0.0, sz, 0.0,
+                       0.0, 0.0, 0.0, 1.0);
     }
 
     /**
-     * @brief Genera una matriz de traslaciÛn.
+     * @brief Genera una matriz de traslaci√≥n.
      * 
      * @param x Desplazamiento en el eje X.
      * @param y Desplazamiento en el eje Y.
      * @param z Desplazamiento en el eje Z.
-     * @return Matrix4 Matriz 4x4 que define la traslaciÛn.
+     * @return Matrix4 Matriz 4x4 que define la traslaci√≥n.
      */
-    static Matrix4 translate(double x, double y, double z) {
-        return Matrix4();
+    static Matrix4 translate(double tx, double ty, double tz) {
+        return Matrix4(1.0, 0.0, 0.0, tx,
+                       0.0, 1.0, 0.0, ty,
+                       0.0, 0.0, 1.0, tz,
+                       0.0, 0.0, 0.0, 1.0);
     }
 
 
@@ -944,10 +1087,10 @@ int main() {
 
     // Comparar vectores
     bool areEqual = Vector3::equals(v1, v2);
-    cout << "v1 y v2 son iguales: " << (areEqual ? "SÌ" : "No") << endl;
+    cout << "v1 y v2 son iguales: " << (areEqual ? "S√≠" : "No") << endl;
 
     bool areExactEqual = Vector3::exactEquals(v1, v2);
-    cout << "v1 y v2 son exactamente iguales: " << (areExactEqual ? "SÌ" : "No") << endl;
+    cout << "v1 y v2 son exactamente iguales: " << (areExactEqual ? "S√≠" : "No") << endl;
 
 
 	// Pruebas para Matrix3
@@ -971,21 +1114,21 @@ int main() {
     cout << m4.a10 << " " << m4.a11 << " " << m4.a12 << endl;
     cout << m4.a20 << " " << m4.a21 << " " << m4.a22 << endl;
 
-    // MultiplicaciÛn de matrices
+    // Multiplicaci√≥n de matrices
     Matrix3 m5 = Matrix3::multiply(m1, m2);
-    cout << "MultiplicaciÛn de m1 y m2:" << endl;
+    cout << "Multiplicaci√≥n de m1 y m2:" << endl;
     cout << m5.a00 << " " << m5.a01 << " " << m5.a02 << endl;
     cout << m5.a10 << " " << m5.a11 << " " << m5.a12 << endl;
     cout << m5.a20 << " " << m5.a21 << " " << m5.a22 << endl;
 
-    // MultiplicaciÛn por escalar
+    // Multiplicaci√≥n por escalar
     Matrix3 m6 = Matrix3::multiplyScalar(m2, 2.0);
-    cout << "MultiplicaciÛn de m2 por escalar 2.0:" << endl;
+    cout << "Multiplicaci√≥n de m2 por escalar 2.0:" << endl;
     cout << m6.a00 << " " << m6.a01 << " " << m6.a02 << endl;
     cout << m6.a10 << " " << m6.a11 << " " << m6.a12 << endl;
     cout << m6.a20 << " " << m6.a21 << " " << m6.a22 << endl;
 
-    // InversiÛn de matriz
+    // Inversi√≥n de matriz
     Matrix3 m7 = m2.invert();
     cout << "Inversa de m2:" << endl;
     cout << m7.a00 << " " << m7.a01 << " " << m7.a02 << endl;
@@ -1011,9 +1154,9 @@ int main() {
     cout << m9.a10 << " " << m9.a11 << " " << m9.a12 << endl;
     cout << m9.a20 << " " << m9.a21 << " " << m9.a22 << endl;
 
-    // RotaciÛn
+    // Rotaci√≥n
     Matrix3 m10 = Matrix3::rotate(3.14159265358979 / 4); // 45 grados
-    cout << "RotaciÛn de 45 grados:" << endl;
+    cout << "Rotaci√≥n de 45 grados:" << endl;
     cout << m10.a00 << " " << m10.a01 << " " << m10.a02 << endl;
     cout << m10.a10 << " " << m10.a11 << " " << m10.a12 << endl;
     cout << m10.a20 << " " << m10.a21 << " " << m10.a22 << endl;
@@ -1025,9 +1168,9 @@ int main() {
     cout << m11.a10 << " " << m11.a11 << " " << m11.a12 << endl;
     cout << m11.a20 << " " << m11.a21 << " " << m11.a22 << endl;
 
-    // TraslaciÛn
+    // Traslaci√≥n
     Matrix3 m12 = Matrix3::translate(5.0, 10.0);
-    cout << "TraslaciÛn (5.0, 10.0):" << endl;
+    cout << "Traslaci√≥n (5.0, 10.0):" << endl;
     cout << m12.a00 << " " << m12.a01 << " " << m12.a02 << endl;
     cout << m12.a10 << " " << m12.a11 << " " << m12.a12 << endl;
     cout << m12.a20 << " " << m12.a21 << " " << m12.a22 << endl;
@@ -1062,10 +1205,60 @@ int main() {
     cout << "Vector a cero: (" << vectorA.x << ", " << vectorA.y << ", " << vectorA.z << ", " << vectorA.w << ")\n";
 
 
+	//pruebas Matrix4
+        // Crear matrices
+    Matrix4 mat1(1, 2, 3, 4,
+                 5, 6, 7, 8,
+                 9, 10, 11, 12,
+                 13, 14, 15, 16);
+
+    Matrix4 mat2(16, 15, 14, 13,
+                 12, 11, 10, 9,
+                 8, 7, 6, 5,
+                 4, 3, 2, 1);
+
+    // Probar m√©todos
+    Matrix4 identityMat = mat1.identity();
+    cout << "Identidad Matrix4:" << endl;
+    cout << " " << identityMat.a00 << " " << identityMat.a01 << " " << identityMat.a02 << " " << identityMat.a03 << endl;
+    cout << " " << identityMat.a10 << " " << identityMat.a11 << " " << identityMat.a12 << " " << identityMat.a13 << endl;
+    cout << " " << identityMat.a20 << " " << identityMat.a21 << " " << identityMat.a22 << " " << identityMat.a23 << endl;
+    cout << " " << identityMat.a30 << " " << identityMat.a31 << " " << identityMat.a32 << " " << identityMat.a33 << endl;
+
+    Matrix4 result = mat1.multiplyScalar(mat1,2.0);
+    cout << "Matrix 1 multiplicado por 2.0:" << endl;
+    cout << " " << result.a00 << " " << result.a01 << " " << result.a02 << " " << result.a03 << endl;
+    cout << " " << result.a10 << " " << result.a11 << " " << result.a12 << " " << result.a13 << endl;
+    cout << " " << result.a20 << " " << result.a21 << " " << result.a22 << " " << result.a23 << endl;
+    cout << " " << result.a30 << " " << result.a31 << " " << result.a32 << " " << result.a33 << endl;
+
+    result = mat1.subtract(mat2, mat1);
+    cout << "Matrix 1 menos Matrix 2:" << endl;
+    cout << " " << result.a00 << " " << result.a01 << " " << result.a02 << " " << result.a03 << endl;
+    cout << " " << result.a10 << " " << result.a11 << " " << result.a12 << " " << result.a13 << endl;
+    cout << " " << result.a20 << " " << result.a21 << " " << result.a22 << " " << result.a23 << endl;
+    cout << " " << result.a30 << " " << result.a31 << " " << result.a32 << " " << result.a33 << endl;
+
+    result = mat1.multiply(mat1, mat2);
+    cout << "Matrix 1 multiplied by Matrix 2:" << endl;
+    cout << " " << result.a00 << " " << result.a01 << " " << result.a02 << " " << result.a03 << endl;
+    cout << " " << result.a10 << " " << result.a11 << " " << result.a12 << " " << result.a13 << endl;
+    cout << " " << result.a20 << " " << result.a21 << " " << result.a22 << " " << result.a23 << endl;
+    cout << " " << result.a30 << " " << result.a31 << " " << result.a32 << " " << result.a33 << endl;
+
+    result = mat1.transpose();
+    cout << "Transpose de Matrix 1:" << endl;
+    cout << " " << result.a00 << " " << result.a01 << " " << result.a02 << " " << result.a03 << endl;
+    cout << " " << result.a10 << " " << result.a11 << " " << result.a12 << " " << result.a13 << endl;
+    cout << " " << result.a20 << " " << result.a21 << " " << result.a22 << " " << result.a23 << endl;
+    cout << " " << result.a30 << " " << result.a31 << " " << result.a32 << " " << result.a33 << endl;
+
+    //result = mat1.invert();
+    //cout << "Inversa de Matrix 1:" << endl;
+    //cout << " " << result.a00 << " " << result.a01 << " " << result.a02 << " " << result.a03 << endl;
+    //cout << " " << result.a10 << " " << result.a11 << " " << result.a12 << " " << result.a13 << endl;
+    //cout << " " << result.a20 << " " << result.a21 << " " << result.a22 << " " << result.a23 << endl;
+    //cout << " " << result.a30 << " " << result.a31 << " " << result.a32 << " " << result.a33 << endl;
+
     return 0;
 }
-
-
-
-
-
